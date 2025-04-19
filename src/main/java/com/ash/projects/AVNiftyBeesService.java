@@ -1,17 +1,22 @@
+package com.ash.projects;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+@Service
 public class AVNiftyBeesService {
-    public static void main(String[] args) {
+
+    public Double calculateNiftyBeesPriceOnDate(String date){
 
         String apiKey = "4ZQW41KQVE1102P2";
-        String symbol = "RELIANCE.BO";
+        String symbol = "NIFTYBEES.BSE";
         String url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + symbol + "&outputsize=full&apikey=" + apiKey;
 
         OkHttpClient client = new OkHttpClient.Builder()
@@ -33,19 +38,19 @@ public class AVNiftyBeesService {
 
             JsonObject timeSeries = rootObject.getAsJsonObject("Time Series (Daily)");
 
-            String date = "2024-10-08";
+//            String date = "2024-10-08";
             if(timeSeries.has(date)){
                 JsonObject jsonObject = timeSeries.getAsJsonObject(date);
-                String closingPrice = jsonObject.get("4. close").getAsString();
-                System.out.println(closingPrice);
+                return jsonObject.get("4. close").getAsDouble();
+//                System.out.println(closingPrice);
             }
             else {
-                System.out.println("Closing price for" + date + " not available");
+                System.err.println("Closing price for " + date + " not available");
+                return null;
             }
-
-
         } catch (IOException e) {
-            System.out.println("Error fetching stock data");
+            System.err.println("Error fetching stock data: " + e.getMessage());
+            return null;
         }
     }
 }

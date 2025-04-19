@@ -1,22 +1,27 @@
+package com.ash.projects;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
+@Service
 public class ExcelReader {
-    public static void main(String[] args) {
+    public Map<String, Double> readTradeBook(String path){
+
+        Map<String, Double> dateWiseAmountSpent = new TreeMap<>();
+
         try {
-            FileInputStream file = new FileInputStream("E:\\portfolio-comparator/tradebook-GPZ076-EQ.xlsx");
+
+            FileInputStream file = new FileInputStream(path);
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheetAt(0);
-
-            Map<String, Double> dateWiseAmountSpent = new HashMap<>();
 
             Iterator<Row> rowIterator = sheet.iterator();
             while (rowIterator.hasNext()) {
@@ -66,12 +71,9 @@ public class ExcelReader {
             }
             file.close();
 
-            for(Map.Entry<String, Double> entry: dateWiseAmountSpent.entrySet()){
-                System.out.println("Date: " + entry.getKey() + " , Net Amount: Rs. " + entry.getValue());
-            }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return dateWiseAmountSpent;
     }
 }
